@@ -1,0 +1,32 @@
+[project]
+name = "10-06-2025-candlestick"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "colorama>=0.4.6",
+    "dash>=3.0.4",
+    "einops>=0.8.1",
+    "litellm>=1.72.6",
+    "matplotlib>=3.10.3",
+    "mss>=10.0.0",
+    "numpy>=2.3.0",
+    "ollama>=0.5.1",
+    "opencv-python>=4.11.0.86",
+    "pillow>=11.2.1",
+    "plotly>=6.1.2",
+    "torch>=2.7.1",
+    "yfinance>=0.2.63",
+]
+
+# pyproject.toml
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
