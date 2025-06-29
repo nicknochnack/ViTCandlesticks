@@ -1,5 +1,6 @@
 from model import ViT
 from data import ClfDataset 
+import torch
 from torch import nn, optim, save
 from torch.utils.data import DataLoader, random_split
 from colorama import Fore 
@@ -12,11 +13,11 @@ if __name__ == '__main__':
     train_dataset = DataLoader(train_data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=2)
     test_dataset = DataLoader(test_data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=2)
 
-    model = ViT()
+    model = ViT().to('cuda')
     loss_fn = nn.CrossEntropyLoss()
-    opt = optim.Adam(model.parameters(), lr=1e-4)
+    opt = optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-4)
 
-    epochs=40
+    epochs=400
     train_batches = len(train_dataset)
     print(Fore.LIGHTYELLOW_EX + "Starting training" + Fore.RESET) 
     for epoch in range(epochs):
@@ -24,8 +25,8 @@ if __name__ == '__main__':
         epoch_loss = 0.0  
         for batch_idx, batch in enumerate(train_dataset): 
             X, y = batch
-            yhat = model(X)
-            loss = loss_fn(yhat, y) 
+            yhat = model(X.to('cuda'))
+            loss = loss_fn(yhat, y.to('cuda')) 
             epoch_loss += loss.item() 
 
             opt.zero_grad()
@@ -42,14 +43,15 @@ if __name__ == '__main__':
         print(f' - Train Loss: {epoch_loss/train_batches:.4f}', end='')
         # Evaluate test set
         model.eval() 
-        epoch_loss = 0.0  
-        for batch_idx, batch in enumerate(test_dataset): 
-            X, y = batch
-            yhat = model(X)
-            loss = loss_fn(yhat, y) 
-            epoch_loss += loss.item() 
+        with torch.no_grad():
+            epoch_loss = 0.0  
+            for batch_idx, batch in enumerate(test_dataset): 
+                X, y = batch
+                yhat = model(X.to('cuda'))
+                loss = loss_fn(yhat, y.to('cuda')) 
+                epoch_loss += loss.item() 
 
-        print(f' - Test Loss: {epoch_loss/len(test_dataset):.4f}')
+            print(f' - Test Loss: {epoch_loss/len(test_dataset):.4f}')
 
         if epoch % 10 == 0: 
             save(model.state_dict(), f'checkpoints/{epoch}_model.pt')

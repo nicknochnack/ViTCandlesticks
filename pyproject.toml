@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "albumentations>=2.0.8",
     "colorama>=0.4.6",
     "dash>=3.0.4",
     "einops>=0.8.1",

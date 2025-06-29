@@ -7,7 +7,7 @@ class Transformer(nn.Module):
     def __init__(self, embed_dim, num_heads, mlp_dim, batch_first=True): 
         super().__init__()
         self.norm1 = nn.LayerNorm(embed_dim)
-        self.mha = nn.MultiheadAttention(embed_dim, num_heads, batch_first=batch_first)
+        self.mha = nn.MultiheadAttention(embed_dim, num_heads, batch_first=batch_first, dropout=0.5)
         self.norm2 = nn.LayerNorm(embed_dim)
         self.mlp = nn.Sequential(
             nn.Linear(embed_dim, mlp_dim), 
@@ -44,12 +44,12 @@ def pos_encoding(seq_length, dim_size):
 class ViT(nn.Module): 
     def __init__(self): 
         super().__init__() 
-        self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=8, p2=8)
+        self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=16, p2=16)
         self.class_token = nn.Parameter(torch.randn(1,1,1032))
-        self.embedding = nn.Linear(192,1032)
-        self.register_buffer('positional_embedding', pos_encoding(136,1032)) 
-        self.emb_dropout = nn.Dropout(0.25)
-        self.norm1 = nn.LayerNorm(192) 
+        self.embedding = nn.Linear(768,1032)
+        self.register_buffer('positional_embedding', pos_encoding(197,1032)) 
+        self.emb_dropout = nn.Dropout(0.5)
+        self.norm1 = nn.LayerNorm(768) 
         
         self.norm2 = nn.LayerNorm(1032) 
 
