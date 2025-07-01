@@ -5,7 +5,6 @@ from torch import nn, optim, save
 from torch.utils.data import DataLoader, random_split
 from colorama import Fore 
 import torchvision
-from torchinfo import summary 
 
 if __name__ == '__main__': 
     data = ClfDataset('consolidated_data') 
@@ -59,7 +58,7 @@ if __name__ == '__main__':
 
             print(f' - Test Loss: {epoch_loss/len(test_dataset):.4f}')
 
-        if epoch % 10 == 0: 
+        if epoch % 25 == 0: 
             save(model.state_dict(), f'checkpoints/{epoch}_model.pt')
     save(model.state_dict(), f'checkpoints/{epoch}_model.pt')
 

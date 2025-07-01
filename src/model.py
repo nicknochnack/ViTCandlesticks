@@ -14,7 +14,7 @@ class MLPBlock(nn.Sequential):
             nn.Dropout()
         )
 
-# Build encoder block
+# Build encoder
 class EncoderBlock(nn.Module): 
     def __init__(self, embed_dim, num_heads, mlp_dim, batch_first=True): 
         super().__init__()
@@ -28,8 +28,8 @@ class EncoderBlock(nn.Module):
 
         z1 = self.ln_1(x)
         # Add in pre ln skip
-        z1 = self.self_attention(z1,z1,z1,need_weights=False) + x 
-        z1 = self.dropout(z1[0])
+        z1 = self.self_attention(z1,z1,z1,need_weights=False)[0] + x 
+        z1 = self.dropout(z1)
         
         z2 = self.ln_2(z1)
         # Add in pre ln skip
