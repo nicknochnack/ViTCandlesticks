@@ -16,6 +16,7 @@ if __name__ == '__main__':
     test_dataset = DataLoader(test_data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=2)
 
     model = ViT()
+    # Load pretrained weights
     pretrained = torchvision.models.vit_b_16() 
     print(model.encoder.layers.load_state_dict(pretrained.encoder.layers.state_dict()))
     print(model, (1,3,224,224))

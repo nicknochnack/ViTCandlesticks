@@ -14,6 +14,7 @@ class MLPBlock(nn.Sequential):
             nn.Dropout()
         )
 
+# Build encoder block
 class EncoderBlock(nn.Module): 
     def __init__(self, embed_dim, num_heads, mlp_dim, batch_first=True): 
         super().__init__()
