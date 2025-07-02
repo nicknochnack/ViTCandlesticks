@@ -9,9 +9,9 @@ class MLPBlock(nn.Sequential):
         super(MLPBlock, self).__init__(
             nn.Linear(embed_dim, mlp_dim),
             nn.GELU(),
-            nn.Dropout(), 
+            nn.Dropout(0.0), 
             nn.Linear(mlp_dim, embed_dim), 
-            nn.Dropout()
+            nn.Dropout(0.0)
         )
 
 # Build encoder
@@ -19,7 +19,7 @@ class EncoderBlock(nn.Module):
     def __init__(self, embed_dim, num_heads, mlp_dim, batch_first=True): 
         super().__init__()
         self.ln_1 = nn.LayerNorm(embed_dim)
-        self.self_attention = nn.MultiheadAttention(embed_dim, num_heads, batch_first=batch_first, dropout=0.5)
+        self.self_attention = nn.MultiheadAttention(embed_dim, num_heads, batch_first=batch_first, dropout=0.0)
         self.dropout = nn.Dropout(0.0)
         self.ln_2 = nn.LayerNorm(embed_dim)
         self.mlp = MLPBlock(embed_dim, mlp_dim)
@@ -49,8 +49,8 @@ def pos_encoding(seq_length, dim_size):
     p = torch.zeros((seq_length, dim_size)) 
     for k in range(seq_length):  
         for i in range(int(dim_size/2)): 
-            p[k,2*i] = torch.sin(torch.tensor(k/10000 ** (2*i/dim_size)))
-            p[k,2*i+1] = torch.cos(torch.tensor(k/10000 ** (2*i/dim_size)))
+            p[k,2*i] = torch.sin(torch.tensor(k/(10000 ** (2*i/dim_size))))
+            p[k,2*i+1] = torch.cos(torch.tensor(k/(10000 ** (2*i/dim_size))))
     return p 
 
 # Build the Model 
@@ -61,7 +61,7 @@ class ViT(nn.Module):
         self.class_token = nn.Parameter(torch.randn(1,1,768))
         self.embedding = nn.Linear(768,768)
         self.register_buffer('positional_embedding', pos_encoding(197,768)) 
-        self.emb_dropout = nn.Dropout(0.5)
+        self.emb_dropout = nn.Dropout(0.0)
         self.norm1 = nn.LayerNorm(768) 
         self.norm2 = nn.LayerNorm(768) 
 
