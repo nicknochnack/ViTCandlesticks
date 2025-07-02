@@ -18,7 +18,6 @@ if __name__ == '__main__':
     # Load pretrained weights
     pretrained = torchvision.models.vit_b_16() 
     print(model.encoder.layers.load_state_dict(pretrained.encoder.layers.state_dict()))
-    print(model, (1,3,224,224))
     loss_fn = nn.CrossEntropyLoss()
     opt = optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-4)
 

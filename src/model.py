@@ -34,7 +34,7 @@ class EncoderBlock(nn.Module):
         z2 = self.ln_2(z1)
         # Add in pre ln skip
         z2 = self.mlp(z2) + z1
-        return x 
+        return z2
 
 class Encoder(nn.Module): 
     def __init__(self, embed_dim, num_heads, mlp_dim, num_layers): 
@@ -95,4 +95,4 @@ if __name__ == '__main__':
     print(model.encoder.layers.load_state_dict(pretrained.encoder.layers.state_dict()))
     print(model) 
     # model.eval()
-    # print(model(torch.randn(1,3,72,120)))
+    # print(model(torch.randn(1,3,224,224)))
