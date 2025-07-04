@@ -9,50 +9,35 @@ from torchinfo import summary
 
 
 if __name__ == "__main__":
-    data = ClfDataset("consolidated_data")
-    train_size = int(0.7 * len(data))
-    test_size = len(data) - train_size
     torch.manual_seed(42)
-    train_data, test_data = random_split(data, [train_size, test_size])
+    # Get train and test data 
+    train_val_data = ClfDataset("consolidated_data", train=True)
+    test_data = ClfDataset("consolidated_data", train=False)
+    # Create train and val splits
+    train_size = int(0.7 * len(data))
+    val_size = len(data) - train_size
+    train_data, val_data = random_split(data, [train_size, test_size])
 
-    # Implement cut_mix, mix_up
+    # Implement cut_mix, mix_up for train and val only 
     cutmix = v2.CutMix(num_classes=6)
     mixup = v2.MixUp(num_classes=6)
     cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
-
     def collate_fn(batch):
         return cutmix_or_mixup(*default_collate(batch))
 
     train_dataset = DataLoader(
-        train_data,
-        batch_size=16,
-        shuffle=True,
-        prefetch_factor=2,
-        num_workers=2,
-        collate_fn=collate_fn,
+        train_data, batch_size=16, shuffle=True, prefetch_factor=2, num_workers=2, collate_fn=collate_fn,
+    )
+    val_dataset = DataLoader(
+        val_data, batch_size=16, shuffle=False, prefetch_factor=2, num_workers=2
     )
     test_dataset = DataLoader(
         test_data, batch_size=16, shuffle=False, prefetch_factor=2, num_workers=2
-    )
+    ) 
 
     model = ViT().to("cuda")
     print(summary(model, (1, 3, 120, 72)))
-    # # Load pretrained weights
-    # pretrained = torchvision.models.vit_b_16()
-    # print(model.encoder.layers.load_state_dict(pretrained.encoder.layers.state_dict()))
-    # loss_fn = nn.CrossEntropyLoss(label_smoothing=0.11).to('cuda'))
-    loss_fn = nn.CrossEntropyLoss(
-        # weight=torch.tensor(
-        #     [
-        #         0.025778403,
-        #         0.085235044,
-        #         0.176152424,
-        #         0.170470087,
-        #         0.264228636,
-        #         0.278135406,
-        #     ]
-        # ).to('cuda')
-    )
+    loss_fn = nn.CrossEntropyLoss()
 
     epochs = 400
     opt = optim.Adam(model.parameters(), lr=1e-4, weight_decay=1e-4)
@@ -83,10 +68,18 @@ if __name__ == "__main__":
             )
 
         print(f" - Train Loss: {epoch_loss/train_batches:.4f}", end="")
-        # Evaluate test set
+        # Evaluate val and test set
         model.eval()
         with torch.no_grad():
             epoch_loss = 0.0
+            for batch_idx, batch in enumerate(val_dataset):
+                X, y = batch
+                yhat = model(X.to("cuda"))
+                loss = loss_fn(yhat, y.to("cuda"))
+                epoch_loss += loss.item()
+
+            print(f" - Val Loss: {epoch_loss/len(val_dataset):.4f}", end="")
+
             for batch_idx, batch in enumerate(test_dataset):
                 X, y = batch
                 yhat = model(X.to("cuda"))

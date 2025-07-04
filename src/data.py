@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 
 class ClfDataset(Dataset):
-    def __init__(self, path):
+    def __init__(self, path, train=True):
         super().__init__()
         self.path = path
         self.images = [x for x in os.listdir(self.path) if x.endswith(".png")]
@@ -18,9 +18,7 @@ class ClfDataset(Dataset):
             [
                 A.Resize(226, 226),
                 A.Crop(x_min=128, y_min=38, x_max=200, y_max=158),
-                A.ColorJitter(
-                    brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.2
-                ),
+                *([A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.2)] if train else []),
                 A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 A.ToTensorV2(),
             ]
@@ -37,7 +35,7 @@ class ClfDataset(Dataset):
 
 
 if __name__ == "__main__":
-    data = ClfDataset("consolidated_data")
+    data = ClfDataset("data/train_data")
     dataloder = DataLoader(
         data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=4
     )
