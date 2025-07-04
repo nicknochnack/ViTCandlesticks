@@ -10,9 +10,9 @@ class MLPBlock(nn.Sequential):
         super(MLPBlock, self).__init__(
             nn.Linear(embed_dim, mlp_dim),
             nn.GELU(),
-            nn.Dropout(0.0),
+            nn.Dropout(0.25),
             nn.Linear(mlp_dim, embed_dim),
-            nn.Dropout(0.0),
+            nn.Dropout(0.25),
         )
 
 
@@ -22,9 +22,9 @@ class EncoderBlock(nn.Module):
         super().__init__()
         self.ln_1 = nn.LayerNorm(embed_dim)
         self.self_attention = nn.MultiheadAttention(
-            embed_dim, num_heads, batch_first=batch_first, dropout=0.0
+            embed_dim, num_heads, batch_first=batch_first, dropout=0.25
         )
-        self.dropout = nn.Dropout(0.0)
+        self.dropout = nn.Dropout(0.25)
         self.ln_2 = nn.LayerNorm(embed_dim)
         self.mlp = MLPBlock(embed_dim, mlp_dim)
 
@@ -67,16 +67,16 @@ def pos_encoding(seq_length, dim_size):
 class ViT(nn.Module):
     def __init__(self):
         super().__init__()
-        self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=16, p2=16)
-        self.class_token = nn.Parameter(torch.randn(1, 1, 384))
-        self.embedding = nn.Linear(768, 384)
-        self.register_buffer("positional_embedding", pos_encoding(197, 384))
-        self.emb_dropout = nn.Dropout(0.0)
-        self.norm1 = nn.LayerNorm(768)
-        self.norm2 = nn.LayerNorm(384)
+        self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=8, p2=8)
+        self.class_token = nn.Parameter(torch.randn(1, 1, 768))
+        self.embedding = nn.Linear(192, 768)
+        self.register_buffer("positional_embedding", pos_encoding(136, 768))
+        self.emb_dropout = nn.Dropout(0.25)
+        self.norm1 = nn.LayerNorm(192)
+        self.norm2 = nn.LayerNorm(768)
 
-        self.encoder = Encoder(384, 12, 1024, 3)
-        self.mlp1 = nn.Linear(384, 6)
+        self.encoder = Encoder(768, 12, 1024, 3)
+        self.mlp1 = nn.Linear(768, 6)
 
     def forward(self, x):
         batch_size = x.shape[0]
