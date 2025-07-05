@@ -11,12 +11,12 @@ from torchinfo import summary
 if __name__ == "__main__":
     torch.manual_seed(42)
     # Get train and test data 
-    train_val_data = ClfDataset("consolidated_data", train=True)
-    test_data = ClfDataset("consolidated_data", train=False)
+    train_val_data = ClfDataset("data/train_data", train=True)
+    test_data = ClfDataset("data/test_data", train=False)
     # Create train and val splits
-    train_size = int(0.7 * len(data))
-    val_size = len(data) - train_size
-    train_data, val_data = random_split(data, [train_size, test_size])
+    train_size = int(0.7 * len(train_val_data))
+    val_size = len(train_val_data) - train_size
+    train_data, val_data = random_split(train_val_data, [train_size, val_size])
 
     # Implement cut_mix, mix_up for train and val only 
     cutmix = v2.CutMix(num_classes=6)
