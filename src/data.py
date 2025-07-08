@@ -31,11 +31,12 @@ class ClfDataset(Dataset):
         img = Image.open(os.path.join(self.path, self.images[idx])).convert("RGB")
         img_tensor = self.transform(image=np.array(img))
         label = self.labels.loc[self.images[idx]]["Label"]
+        
         return img_tensor["image"], torch.tensor(label)
 
 
 if __name__ == "__main__":
-    data = ClfDataset("data/train_data")
+    data = ClfDataset("zz_generated")
     dataloder = DataLoader(
         data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=4
     )
