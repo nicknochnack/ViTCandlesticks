@@ -76,7 +76,7 @@ class ViT(nn.Module):
         self.norm2 = nn.LayerNorm(768)
 
         self.encoder = Encoder(768, 12, 1024, 3)
-        self.mlp1 = nn.Linear(768, 6)
+        self.mlp1 = nn.Linear(768, 5)
 
     def forward(self, x):
         batch_size = x.shape[0]

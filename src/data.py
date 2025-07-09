@@ -12,13 +12,18 @@ class ClfDataset(Dataset):
     def __init__(self, path, train=True):
         super().__init__()
         self.path = path
-        self.images = [x for x in os.listdir(self.path) if x.endswith(".png")]
-        self.labels = pd.read_csv(f"{path}/labels.csv").set_index("Image")
+        # Exclude zeros 
+        self.image_df = pd.read_csv(f"{self.path}/labels.csv")
+        self.image_df = self.image_df[self.image_df['Label'] != 0]
+        self.image_df['Label'] = self.image_df['Label'] - 1
+
+        self.images = list(self.image_df['Image'].values)
+        self.labels = self.image_df.set_index("Image")
         self.transform = A.Compose(
             [
-                A.Resize(226, 226),
+                A.Resize(224,224),
+                *([A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.4)] if train else []),
                 A.Crop(x_min=128, y_min=38, x_max=200, y_max=158),
-                *([A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.2)] if train else []),
                 A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 A.ToTensorV2(),
             ]
@@ -28,7 +33,10 @@ class ClfDataset(Dataset):
         return len(self.images)
 
     def __getitem__(self, idx):
-        img = Image.open(os.path.join(self.path, self.images[idx])).convert("RGB")
+        image_name = self.images[idx]
+        image_type = self.labels.loc[image_name]['Type']
+
+        img = Image.open(os.path.join(self.path, image_type, image_name)).convert("RGB")
         img_tensor = self.transform(image=np.array(img))
         label = self.labels.loc[self.images[idx]]["Label"]
         
