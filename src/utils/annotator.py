@@ -172,8 +172,8 @@ class ImageAnnotator:
 
 def main():
     # Configuration - modify these paths as needed
-    IMAGE_FOLDER = "test_data"  # Change this to your image folder path
-    CSV_FILE = "test_data/labels.csv"   # This will use your existing CSV file
+    IMAGE_FOLDER = "data/test_data/hand_labelled"  # Change this to your image folder path
+    CSV_FILE = "data/test_data/hand_labelled/labels.csv"   # This will use your existing CSV file
     
     # Verify image folder exists
     if not os.path.exists(IMAGE_FOLDER):
