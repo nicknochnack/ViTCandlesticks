@@ -14,12 +14,12 @@ candles = {
 }
 
 model = ViT()
-model.load_state_dict(torch.load("checkpoints/50_model.pt", weights_only=True, map_location=torch.device('cpu')))
+model.load_state_dict(torch.load("checkpoints/25_model.pt", weights_only=True, map_location=torch.device('cpu')))
 model.eval()
 
 data = ClfDataset("data/test_data")
 dataloader = DataLoader(
-    data, batch_size=4, shuffle=True
+    data, batch_size=64, shuffle=True
     # , prefetch_factor=2, num_workers=2
 )
 sample = next(iter(dataloader))
@@ -37,7 +37,7 @@ print(sample[1])
 loss_fn = nn.CrossEntropyLoss()
 print(loss_fn(preds, sample[1]))
 
-fig, ax = plt.subplots(2,2) 
+fig, ax = plt.subplots(8,8) 
 axs = ax.flatten()
 for act, pred, img, ax in zip(sample[1], argmaxes, X, axs):
     img_np = img.permute(1, 2, 0).numpy()

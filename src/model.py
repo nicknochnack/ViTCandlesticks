@@ -75,7 +75,7 @@ class ViT(nn.Module):
         self.norm1 = nn.LayerNorm(192)
         self.norm2 = nn.LayerNorm(768)
 
-        self.encoder = Encoder(768, 12, 1024, 3)
+        self.encoder = Encoder(768, 12, 1024, 6)
         self.mlp1 = nn.Linear(768, 5)
 
     def forward(self, x):

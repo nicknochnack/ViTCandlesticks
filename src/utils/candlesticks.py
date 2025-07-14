@@ -22,8 +22,8 @@ if __name__ == "__main__":
         high=[0],
         low=[0],
         close=[0])])
-    fig.update_layout(height=600)
-    fig.write_image(f'test_data/{uuid.uuid1()}.png')
+    fig.update_layout(height=960, margin_l=200, margin_r=200, margin_b=200, margin_t=200)
+    # fig.write_image(f'test_data/{uuid.uuid1()}.png')
 
 
     app = Dash()
@@ -50,8 +50,8 @@ if __name__ == "__main__":
             high=data['High'],
             low=data['Low'],
             close=data['Close'])])
-        fig.update_layout(height=600)
-        fig.write_image(f'test_data/{uuid.uuid1()}.png')
+        fig.update_layout(height=960, margin_l=200, margin_r=200, margin_b=200, margin_t=200)
+        # fig.write_image(f'test_data/{uuid.uuid1()}.png')
 
         return fig 
 
