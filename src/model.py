@@ -70,7 +70,7 @@ class ViT(nn.Module):
         self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=8, p2=8)
         self.class_token = nn.Parameter(torch.randn(1, 1, 768))
         self.embedding = nn.Linear(192, 768)
-        self.register_buffer("positional_embedding", pos_encoding(136, 768))
+        self.register_buffer("positional_embedding", pos_encoding(53, 768))
         self.emb_dropout = nn.Dropout(0.25)
         self.norm1 = nn.LayerNorm(192)
         self.norm2 = nn.LayerNorm(768)

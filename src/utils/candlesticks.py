@@ -15,7 +15,7 @@ def plot_candles(stock_ticker:str) -> None:
     return historical_prices
 
 if __name__ == "__main__": 
-    df = plot_candles("AMZN").reset_index()
+    df = plot_candles("IBM").reset_index()
 
     fig = go.Figure(data=[go.Candlestick(x=df['Datetime'],
         open=[0],
@@ -31,7 +31,7 @@ if __name__ == "__main__":
         dcc.Graph(figure=fig, id='candlestick-graph'), 
         dcc.Interval(
             id='interval-component',
-            interval=1*1000, # in milliseconds
+            interval=5*1000, # in milliseconds
             n_intervals=0
         )
     ])

@@ -226,8 +226,8 @@ if __name__ == "__main__":
                     raw_image = raw_image.crop((0,170,3840, 2160))
                     raw_image = raw_image.resize((700,500))
                     image_name = f'{uuid.uuid1()}.png'
-                    raw_image.save(f'test_cap_test/{image_name}') 
-                    with open('test_cap_test/labels.csv', 'a') as f:
+                    raw_image.save(f'test_cap_train/{image_name}') 
+                    with open('test_cap_train/labels.csv', 'a') as f:
                         writer = csv.writer(f)
                         writer.writerow([image_name, 5 if stick == 1 else stick-1, 'screengrabs'])  # Previous stick
             except Exception as e: 

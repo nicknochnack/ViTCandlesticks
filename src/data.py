@@ -23,7 +23,7 @@ class ClfDataset(Dataset):
             [
                 A.Resize(224,224),
                 *([A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.4)] if train else []),
-                A.Crop(x_min=128, y_min=38, x_max=200, y_max=158),
+                A.Crop(x_min=172, y_min=43, x_max=204, y_max=147),
                 A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 A.ToTensorV2(),
             ]
@@ -44,7 +44,7 @@ class ClfDataset(Dataset):
 
 
 if __name__ == "__main__":
-    data = ClfDataset("zz_generated")
+    data = ClfDataset("data/test_data")
     dataloder = DataLoader(
         data, batch_size=32, shuffle=True, prefetch_factor=2, num_workers=4
     )
