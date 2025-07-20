@@ -15,7 +15,7 @@ def plot_candles(stock_ticker:str) -> None:
     return historical_prices
 
 if __name__ == "__main__": 
-    df = plot_candles("IBM").reset_index()
+    df = plot_candles("AMZN").reset_index()
 
     fig = go.Figure(data=[go.Candlestick(x=df['Datetime'],
         open=[0],
@@ -23,7 +23,6 @@ if __name__ == "__main__":
         low=[0],
         close=[0])])
     fig.update_layout(height=960, margin_l=200, margin_r=200, margin_b=200, margin_t=200)
-    # fig.write_image(f'test_data/{uuid.uuid1()}.png')
 
 
     app = Dash()
@@ -51,7 +50,6 @@ if __name__ == "__main__":
             low=data['Low'],
             close=data['Close'])])
         fig.update_layout(height=960, margin_l=200, margin_r=200, margin_b=200, margin_t=200)
-        # fig.write_image(f'test_data/{uuid.uuid1()}.png')
 
         return fig 
 

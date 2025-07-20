@@ -17,13 +17,11 @@ model = ViT()
 model.load_state_dict(torch.load("checkpoints/25_model.pt", weights_only=True, map_location=torch.device('cpu')))
 model.eval()
 
-data = ClfDataset("data/test_data")
+data = ClfDataset("data/test_data", train=False)
 dataloader = DataLoader(
-    data, batch_size=64, shuffle=True
-    # , prefetch_factor=2, num_workers=2
+    data, batch_size=16, shuffle=True
 )
 sample = next(iter(dataloader))
-# import sys; sys.exit()
 X = sample[0] 
 print(X.shape)
 softy = torch.nn.Softmax(dim=1)
@@ -37,7 +35,7 @@ print(sample[1])
 loss_fn = nn.CrossEntropyLoss()
 print(loss_fn(preds, sample[1]))
 
-fig, ax = plt.subplots(8,8) 
+fig, ax = plt.subplots(4,4) 
 axs = ax.flatten()
 for act, pred, img, ax in zip(sample[1], argmaxes, X, axs):
     img_np = img.permute(1, 2, 0).numpy()

@@ -68,15 +68,15 @@ class ViT(nn.Module):
     def __init__(self):
         super().__init__()
         self.patch = Rearrange("b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=8, p2=8)
-        self.class_token = nn.Parameter(torch.randn(1, 1, 768))
-        self.embedding = nn.Linear(192, 768)
-        self.register_buffer("positional_embedding", pos_encoding(53, 768))
+        self.class_token = nn.Parameter(torch.randn(1, 1, 1024))
+        self.embedding = nn.Linear(192, 1024)
+        self.register_buffer("positional_embedding", pos_encoding(118, 1024))
         self.emb_dropout = nn.Dropout(0.25)
         self.norm1 = nn.LayerNorm(192)
-        self.norm2 = nn.LayerNorm(768)
+        self.norm2 = nn.LayerNorm(1024)
 
-        self.encoder = Encoder(768, 12, 1024, 6)
-        self.mlp1 = nn.Linear(768, 5)
+        self.encoder = Encoder(1024, 8, 2056, 3)
+        self.mlp1 = nn.Linear(1024, 5)
 
     def forward(self, x):
         batch_size = x.shape[0]

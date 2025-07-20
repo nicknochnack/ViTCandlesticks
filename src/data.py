@@ -12,6 +12,7 @@ class ClfDataset(Dataset):
     def __init__(self, path, train=True):
         super().__init__()
         self.path = path
+        self.train = train
         # Exclude zeros 
         self.image_df = pd.read_csv(f"{self.path}/labels.csv")
         self.image_df = self.image_df[self.image_df['Label'] != 0]
@@ -23,7 +24,7 @@ class ClfDataset(Dataset):
             [
                 A.Resize(224,224),
                 *([A.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.0, p=0.4)] if train else []),
-                A.Crop(x_min=172, y_min=43, x_max=204, y_max=147),
+                A.Crop(x_min=130, y_min=43, x_max=202, y_max=147),
                 A.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 A.ToTensorV2(),
             ]

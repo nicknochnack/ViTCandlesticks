@@ -15,11 +15,12 @@ pretestcheckpoints
 data.zip
 transformed_images
 checkpoints
+checkpoints_backup
 ..bfg-report
 DataMod.ipynb
 Untitled.ipynb
 Untitled1.ipynb
-.ipynb_checkpoints
+.ipynb_checkpoints/
 testfile.py
 test_cap_test
 test_cap_train

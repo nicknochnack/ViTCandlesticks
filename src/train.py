@@ -21,25 +21,25 @@ if __name__ == "__main__":
     # Implement cut_mix, mix_up for train and val only 
     cutmix = v2.CutMix(num_classes=5)
     mixup = v2.MixUp(num_classes=5)
-    cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
+    cutmix_or_mixup = v2.RandomChoice([cutmix, mixup, v2.Identity()], p=[0.25,0.25,0.5])
     def collate_fn(batch):
         return cutmix_or_mixup(*default_collate(batch))
 
     train_dataset = DataLoader(
-        train_data, batch_size=16, shuffle=True, prefetch_factor=2, num_workers=2, collate_fn=collate_fn,
+        train_data, batch_size=16, shuffle=True, collate_fn=collate_fn,
     )
     val_dataset = DataLoader(
-        val_data, batch_size=16, shuffle=False, prefetch_factor=2, num_workers=2
+        val_data, batch_size=16, shuffle=False, 
     )
     test_dataset = DataLoader(
-        test_data, batch_size=16, shuffle=False, prefetch_factor=2, num_workers=2
+        test_data, batch_size=16, shuffle=False,
     ) 
 
-    model = ViT().to('cuda')
-    print(summary(model, (1, 3, 120, 72)))
+    model = ViT()
+    print(summary(model, (1, 3, 104, 72)))
     loss_fn = nn.CrossEntropyLoss()
 
-    epochs = 400
+    epochs = 100
     opt = optim.Adam(model.parameters(), lr=1e-4)
     scheduler = optim.lr_scheduler.CosineAnnealingWarmRestarts(opt, len(train_dataset)*30, T_mult=2)
     train_batches = len(train_dataset)
@@ -49,13 +49,12 @@ if __name__ == "__main__":
         epoch_loss = 0.0
         for batch_idx, batch in enumerate(train_dataset):
             X, y = batch
-            yhat = model(X.to('cuda'))
-            loss = loss_fn(yhat, y.to('cuda'))
+            yhat = model(X)
+            loss = loss_fn(yhat, y)
             epoch_loss += loss.item()
 
             opt.zero_grad()
             loss.backward()
-            # torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             opt.step()
             scheduler.step()
 
@@ -76,20 +75,20 @@ if __name__ == "__main__":
             epoch_loss = 0.0
             for batch_idx, batch in enumerate(val_dataset):
                 X, y = batch
-                yhat = model(X.to('cuda'))
-                loss = loss_fn(yhat, y.to('cuda'))
+                yhat = model(X)
+                loss = loss_fn(yhat, y)
                 epoch_loss += loss.item()
 
             print(f" - Val Loss: {epoch_loss/len(val_dataset):.4f}", end="")
 
             for batch_idx, batch in enumerate(test_dataset):
                 X, y = batch
-                yhat = model(X.to('cuda'))
-                loss = loss_fn(yhat, y.to('cuda'))
+                yhat = model(X)
+                loss = loss_fn(yhat, y)
                 epoch_loss += loss.item()
 
             print(f" - Test Loss: {epoch_loss/len(test_dataset):.4f}")
 
-        if epoch % 25 == 0:
+        if epoch % 5 == 0:
             save(model.state_dict(), f"checkpoints/{epoch}_model.pt")
     save(model.state_dict(), f"checkpoints/{epoch}_model.pt")
