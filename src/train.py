@@ -48,7 +48,7 @@ if __name__ == "__main__":
     # Instantiate the model 
     model = ViT()
     # Output model info 
-    print(summary(model, (1, 3, 104, 72)))
+    summary(model, (1, 3, 104, 72))
 
     # How long we'll train for, we'll capture a bunch of checkpoints so we can choose what to use 
     epochs = 100
