@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import os 
 
 model = ViT()
-model.load_state_dict(torch.load('checkpoints/15_model.pt', weights_only=True, map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('checkpoints/25_model.pt', weights_only=True, map_location=torch.device('cpu')))
 model.eval() 
 
 classes = {

@@ -27,7 +27,7 @@ model.eval()
 # Load up the dataset and batch
 data = ClfDataset("data/test_data", train=False)
 dataloader = DataLoader(
-    data, batch_size=16, shuffle=True
+    data, batch_size=9, shuffle=True
 )
 # Grab one batch
 sample = next(iter(dataloader))
@@ -50,7 +50,7 @@ loss_fn = torch.nn.CrossEntropyLoss()
 print(loss_fn(preds, sample[1]))
 
 # Output all the images to a 4x4 subplot, there's probably too much in the plot tbh 
-fig, ax = plt.subplots(4,4) 
+fig, ax = plt.subplots(3,3) 
 axs = ax.flatten()
 for act, pred, img, ax in zip(sample[1], argmaxes, X, axs):
     img_np = img.permute(1, 2, 0).numpy()
