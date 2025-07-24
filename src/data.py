@@ -14,7 +14,10 @@ from torch.utils.data import Dataset, DataLoader
 import albumentations as A
 # Output sample transformed images - mainly used for testing 
 from matplotlib import pyplot as plt
-
+# Einops for patch testing 
+from einops import rearrange 
+# Image grid for plotting out patch examples
+from mpl_toolkits.axes_grid1 import ImageGrid
 
 class ClfDataset(Dataset):
     def __init__(self, path, train=True):
@@ -74,8 +77,38 @@ if __name__ == "__main__":
     # Go through the back and output the transformed images 
     X, y = next(iter(dataloder))
     print(X.shape, y.shape)
-    for idx, img in enumerate(X):
-        img_np = img.permute(1, 2, 0).numpy()
-        img_min, img_max = img_np.min(), img_np.max()
-        img_np_scaled = (img_np - img_min) / (img_max - img_min)
-        plt.imsave(f"images/transformed_images/{idx}_scaled.png", img_np_scaled)
+
+    # Add this in for the YouTube video to show the cropping results 
+    output_samples = False 
+    output_patches = True 
+    if output_samples == True:
+        for idx, img in enumerate(X):
+            img_np = img.permute(1, 2, 0).numpy()
+            img_min, img_max = img_np.min(), img_np.max()
+            img_np_scaled = (img_np - img_min) / (img_max - img_min)
+            plt.imsave(f"images/transformed_images/{idx}_scaled.png", img_np_scaled)
+    
+    # Add this in for the YouTube video to show outputs after applying the image patch transform - pull viz from archive 
+    if output_patches == True: 
+        patch_size = 8
+        batch_size, channels, height, width = X.shape
+
+        # Double check that we've got appropriate dimensions to compute patches 
+        assert height % patch_size == 0, "Image height needs to be divisible by patch size" 
+        assert width % patch_size == 0, "Image width needs to be divisble by patch size" 
+        # Main patching function 
+        res = rearrange(X, "b c (h p1) (w p2) -> b (h w) (p1 p2 c)", p1=patch_size, p2=patch_size)
+        for idx, img in enumerate(res):
+            reconstructed_image = rearrange(img, "s (p1 p2 c) -> s p1 p2 c", p1=patch_size, p2=patch_size)
+            fig = plt.figure(figsize=(10., 10.))
+            grid = ImageGrid(fig, 111,  # similar to subplot(111)
+                            nrows_ncols=(height // patch_size, width // patch_size),  
+                            axes_pad=0.1,  # pad between Axes in inch.
+                            )
+
+            for idx, ax in enumerate(grid):
+                ax.imshow(reconstructed_image[idx])
+            plt.show()
+  
+        
+        

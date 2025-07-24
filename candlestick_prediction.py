@@ -99,7 +99,10 @@ with mss() as sct:
         label = str(classes[str(int(prediction))]) +' - '+ str(round(float(probability),3))
 
         render_image = cv2.putText(render_image, label, (1350,550), cv2.FONT_HERSHEY_DUPLEX, 3, (0,0,0), 8, cv2.LINE_AA)
-        time.sleep(0.1) 
+        
         cv2.imshow('Frame', render_image)
+        time.sleep(0.1) 
         if cv2.waitKey(1) and 0xFF == ord('q'): 
+            cv2.destroyAllWindows() 
             break
+        

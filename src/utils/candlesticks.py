@@ -30,7 +30,7 @@ if __name__ == "__main__":
         dcc.Graph(figure=fig, id='candlestick-graph'), 
         dcc.Interval(
             id='interval-component',
-            interval=5*1000, # in milliseconds
+            interval=1*1000, # in milliseconds
             n_intervals=0
         )
     ])
