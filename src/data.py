@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     # Add this in for the YouTube video to show the cropping results 
     output_samples = False 
-    output_patches = True 
+    output_patches = False 
     if output_samples == True:
         for idx, img in enumerate(X):
             img_np = img.permute(1, 2, 0).numpy()
