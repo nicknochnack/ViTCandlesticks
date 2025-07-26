@@ -8,7 +8,8 @@ from colorama import Fore
 from einops.layers.torch import Rearrange
 # Pretty print model metrics and layer structure
 from torchinfo import summary
-
+# Bring in matplotlib to visualise positional embedding 
+from matplotlib import pyplot as plt
 
 # Build MLP Head for Transformer Encoder
 class MLPBlock(nn.Sequential):
@@ -137,6 +138,32 @@ class ViT(nn.Module):
 
 # Test it out
 if __name__ == "__main__":
-    # Use summary to see output pretty printed. 
-    model = ViT()
-    summary(model, (1, 3, 104, 72))
+
+    stack_components = ['encoder', 'encoder_block', 'mlp_block', 'pos_embedding', 'vit']
+    component = stack_components[0]
+
+    if component == 'encoder': 
+        encoder = Encoder(1024, 8, 2056, 3)    
+        summary(encoder, (1,118,1024))
+    elif component == 'encoder_block': 
+        encoder_block = EncoderBlock(1024, 8, 2056)    
+        summary(encoder_block, (1,118,1024))
+    elif component == 'mlp_block': 
+        mlp_head = MLPBlock(768, 1024)
+        summary(mlp_head, (1, 118, 768))
+    elif component == 'pos_embedding': 
+        pos = pos_encoding(118, 1024)
+        cax = plt.matshow(pos) 
+        plt.gcf().colorbar(cax)
+        plt.show()
+        # plt.savefig('posembedding') 
+    elif component =='vit': 
+        model = ViT()
+        summary(model, (1, 3, 104, 72))
+    else:
+        pass 
+
+    # model = ViT()
+    # example_inputs = torch.randn(4, 3, 104, 72)
+    # onnx_program = torch.onnx.export(model, example_inputs, dynamo=True)
+    # onnx_program.save("archive/ViTCandlestick.onnx")
